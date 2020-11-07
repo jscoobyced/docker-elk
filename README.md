@@ -12,3 +12,5 @@ Example to popular the logs:
 - Populate the logs: open http://localhost:8080/ multiple times
 - Open http://localhost:9200/_cat/indices/*?v&s=index to capture the index name
 - Open http://localhost:9200/logstash-nginx-sysadmins-2020.11.07/_search to confirm the logs are getting there
+
+__Credits__: Based on the work from [Ruan Bekker](https://blog.ruanbekker.com/blog/2020/04/28/nginx-analysis-dashboard-using-grafana-and-elasticsearch/).
