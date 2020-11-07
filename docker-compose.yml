@@ -1,0 +1,124 @@
+version: '3'
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    volumes:
+      - ${PWD}/data/nginx/logs:/var/log/nginx
+    ports:
+      - 127.0.0.1:8080:80
+  redis:
+    build: ./redis
+    container_name: redis
+    volumes:
+      - redis:/data
+    networks:
+      - elknetwork
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ${PWD}/data/es/data01:/usr/share/elasticsearch/data
+    ports:
+      - 127.0.0.1:9200:9200
+    networks:
+      - elknetwork
+    depends_on:
+      - redis
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ${PWD}/data/es/data02:/usr/share/elasticsearch/data
+    networks:
+      - elknetwork
+    depends_on:
+      - redis
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ${PWD}/data/es/data03:/usr/share/elasticsearch/data
+    networks:
+      - elknetwork
+    depends_on:
+      - redis
+  logstash:
+    build: ./logstash
+    container_name: logstash
+    networks:
+      - elknetwork
+    depends_on:
+      - redis
+      - es01
+      - es02
+      - es03
+  filebeat:
+    build: ./filebeat
+    container_name: filebeat
+    volumes:
+      - ${PWD}/data/nginx/logs:/var/log/nginx
+    networks:
+      - elknetwork
+    depends_on:
+      - logstash
+      - redis
+      - nginx
+  grafana:
+    build: ./grafana
+    container_name: grafana
+    ports:
+      - 127.0.0.1:3000:3000
+    networks:
+      - elknetwork
+    depends_on:
+      - es01
+      - es02
+      - es03
+
+volumes:
+  nginx:
+  redis:
+  data01:
+  data02:
+  data03:
+  logstash:
+  filebeat:
+  grafana:
+
+networks:
+  elknetwork:
+    driver: bridge
