@@ -1,13 +1,5 @@
 version: '3'
 services:
-  nginx:
-    build: ./nginx
-    container_name: nginx
-    volumes:
-      - ${PWD}/data/nginx/logs:/var/log/nginx
-    ports:
-      - 127.0.0.1:8080:80
-    restart: always
   redis:
     build: ./redis
     container_name: redis
@@ -102,7 +94,6 @@ services:
     depends_on:
       - logstash
       - redis
-      - nginx
     restart: always
   grafana:
     build: ./grafana
@@ -116,9 +107,10 @@ services:
       - es02
       - es03
     restart: always
+    volumes:
+      - ${PWD}/data/grafana:/var/lib/grafana
 
 volumes:
-  nginx:
   redis:
   data01:
   data02:

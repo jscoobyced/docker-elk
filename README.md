@@ -1,7 +1,6 @@
 ## Docker ELK stack
 
 This stack consists of:
-- 1 nginx server (for demo purpose, should be removed)
 - 1 redis node
 - 1 filebeat instance
 - 1 logstash instance
@@ -10,21 +9,10 @@ This stack consists of:
 
 **Note this will download about 6GB of docker images.**
 
-# Quick start
+# Setup nginx instance
 
-To test the demo, simply run the `start.sh` script. This will start the whole stack. It will generate a random password for Redis and update relevant configurations to use it.
-
-## Populate the logs
-- Populate the logs: open http://localhost:8080/ multiple times
-- Open http://localhost:9200/_cat/indices/*?v&s=index to capture the index name
-- Open http://localhost:9200/logstash-nginx-sysadmins-2020.11.07/_search to confirm the logs are getting there
-
-# Custom nginx instance
-
-Edit the docker-compose.yml file:
-1. Remove the nginx service
-2. Remove the nginx volume configuration
-3. Add in your nginx system configuration:
+Edit your nginx instance:
+1. Create a `/etc/nginx/conf.d/logs.conf` file with content:
 ```
 log_format json_logs '{"@timestamp":"$time_iso8601","host":"$hostname",'
                         '"server_ip":"$server_addr","client_ip":"$remote_addr",'
@@ -38,9 +26,7 @@ log_format json_logs '{"@timestamp":"$time_iso8601","host":"$hostname",'
                         '"file_dir":"$request_filename","http_user_agent":"$http_user_agent"'
                         '}';
 ```
-This should be located within the `http` configuration in your `nginx.conf` file. It should also work just fine if you put it above your `server` configuration in the specific alias.
-
-4. Update your `access_log` to be
+2. Update your `access_log` to be
 ```
 access_log  /var/log/nginx/access_json.log  json_logs;
 ```
