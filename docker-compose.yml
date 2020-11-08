@@ -7,6 +7,7 @@ services:
       - ${PWD}/data/nginx/logs:/var/log/nginx
     ports:
       - 127.0.0.1:8080:80
+    restart: always
   redis:
     build: ./redis
     container_name: redis
@@ -14,6 +15,7 @@ services:
       - redis:/data
     networks:
       - elknetwork
+    restart: always
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     container_name: es01
@@ -36,6 +38,7 @@ services:
       - elknetwork
     depends_on:
       - redis
+    restart: always
   es02:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     container_name: es02
@@ -56,6 +59,7 @@ services:
       - elknetwork
     depends_on:
       - redis
+    restart: always
   es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     container_name: es03
@@ -76,6 +80,7 @@ services:
       - elknetwork
     depends_on:
       - redis
+    restart: always
   logstash:
     build: ./logstash
     container_name: logstash
@@ -86,6 +91,7 @@ services:
       - es01
       - es02
       - es03
+    restart: always
   filebeat:
     build: ./filebeat
     container_name: filebeat
@@ -97,6 +103,7 @@ services:
       - logstash
       - redis
       - nginx
+    restart: always
   grafana:
     build: ./grafana
     container_name: grafana
@@ -108,6 +115,7 @@ services:
       - es01
       - es02
       - es03
+    restart: always
 
 volumes:
   nginx:
