@@ -1,1 +1,4 @@
 /data
+/filebeat/filebeat.yml
+/logstash/logstash.conf
+/redis/redis.conf
