@@ -13,7 +13,7 @@ then
   sudo sysctl -w vm.max_map_count=262144
 fi
 
-mkdir -p ${PWD}/data/es/data01 ${PWD}/data/es/data02 ${PWD}/data/es/data03 ${PWD}/data/filebeat/logs ${PWD}/data/nginx/logs
+mkdir -p ${PWD}/data/es/data01 ${PWD}/data/es/data02 ${PWD}/data/es/data03 ${PWD}/data/filebeat/logs ${PWD}/data/nginx/logs ${PWD}/data/grafana
 ./update.sh
 
 DOCKER_ELK="docker-elk_redis"
