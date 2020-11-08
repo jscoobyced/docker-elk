@@ -13,7 +13,7 @@ then
   sudo sysctl -w vm.max_map_count=262144
 fi
 
-mkdir -p ${PWD}/data/es/data01 ${PWD}/data/es/data02 ${PWD}/data/es/data03 ${PWD}/data/filebeat/logs ${PWD}/data/nginx/logs ${PWD}/data/grafana
+mkdir -p ${PWD}/data/es/data01 ${PWD}/data/es/data02 ${PWD}/data/es/data03 ${PWD}/data/filebeat/logs ${PWD}/data/nginx/logs ${PWD}/data/grafana/plugins
 ./update.sh
 
 DOCKER_ELK="docker-elk_redis"
@@ -28,4 +28,4 @@ then
   sed -e 's@PASSPASSPASS@'"${REDIS_PWD}"'@g' filebeat/filebeat.yml.tpl > filebeat/filebeat.yml
 fi
 
-docker-compose up -d
+GFUID=${UID} GFGID=${GID} docker-compose up -d
