@@ -28,4 +28,9 @@ then
   sed -e 's@PASSPASSPASS@'"${REDIS_PWD}"'@g' filebeat/filebeat.yml.tpl > filebeat/filebeat.yml
 fi
 
+crontab -l > ${PWD}/crontab.bak
+cp ${PWD}/crontab.bak /tmp/crontab.elk
+echo "* * * * * ${PWD}/update.sh user domain.com" >> /tmp/crontab.elk
+crontab /tmp/crontab.elk
+
 GFUID=${UID} GFGID=${GID} docker-compose up -d
